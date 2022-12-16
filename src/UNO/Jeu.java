@@ -8,10 +8,10 @@ public class Jeu {
     private ArrayList<Carte> pioche=new ArrayList<Carte>();
     private final Paquet paquet = new Paquet();
     private Carte table;/*carte qui représente la dernière carte posée par le joueur*/
+    public static sens sens= Jeu.sens.horaire;
     private enum sens{
         horaire,antiHoraire
     }
-
 
     /**
      * Méthode qui demande le nom des joueurs et leur distribue par la suite le nombre de cartes une par une.
@@ -98,7 +98,13 @@ public class Jeu {
         pioche.remove(0);
     }
 
-    public void deroulementTour(Joueur joueur){
+    /**Méthode qui gère le tour d'un joueur
+     * regarde en premier le carte qui est sur la table et fait les actions en conséquence
+     * @param joueur joueur qui doit jouer
+     * @return joueur suivant
+     */
+    public Joueur deroulementTour(Joueur joueur){
+        System.out.println("Au tour de "+ joueur.getNom());
         System.out.println("sur la table il y a :\n\n"+table+"\n");
         if (table.getSymbole()!=null)/*si il y a une carte joker sur la table*/{
             if (table.getSymbole().equals(Carte.symbole.PLUS_2.toString())){
@@ -112,18 +118,30 @@ public class Jeu {
         } else if (!table.getSuperSymbole().equals(Carte.superSymbole.SANS_SUPSYMBOLE.toString()))/*si il y a un super joker sur la table*/ {
             piochejeu(joueur,4);
         }else /*s'il y a juste une carte avec un chiffre dessus*/{
-            int placeCarte=jeuNormal(joueur);
+            int placeCarte= jouer(joueur);
             if (placeCarte!=-1)/*si le joueur joue*/{
                 joue(joueur.getMain().get(placeCarte));
             }else {
                 piochejeu(joueur,1);
+                Carte derniereCarte=joueur.getMain().get(joueur.getMain().size());
+                if (table.jouable(derniereCarte)){
+                    joue(derniereCarte);
+                }
             }
         }
-        //appel methode qui se nomera joueurSuivant();
-
+        //Determinaison du joueur suivant
+        /*1- voir dans quel sens on joue
+        2- si c'est dans le sens horaire => si c'est le 1=>2, le 2=>3... dernier=>premier
+        si c'est dans le sens anti-horaire => si c'est le dernier=> avant... 1er=> dernier
+        */
+        return null;
     }
 
-    private int jeuNormal(Joueur joueur){
+    /**Méthode qui gère la carte à jouer dans la main du joueur
+     * @param joueur joueur qui doit jouer
+     * @return l'index de la liste où se trouve la carte
+     */
+    private int jouer(Joueur joueur){
         Scanner input=new Scanner(System.in);
         int retour;
         System.out.println(joueur.getNom()+ " que veux tu jouer ?\n"+joueur.getMain());

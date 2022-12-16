@@ -1,6 +1,5 @@
 package UNO;
 
-
 public class TestJoueur {
     public static void main(String[] args) {
         Joueur joueur1=new Joueur();
