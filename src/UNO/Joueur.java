@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Joueur {
     private String nom;
-    private ArrayList<Carte> main= new ArrayList<Carte>();
+    private ArrayList<Carte> main= new ArrayList<>();
 
     public Joueur(String nom, ArrayList<Carte> main) {
         this.nom = nom;
@@ -16,7 +16,7 @@ public class Joueur {
         return nom;
     }
 
-    public void setNom(String nom) {
+    private void setNom(String nom) {
         this.nom = nom;
     }
 
