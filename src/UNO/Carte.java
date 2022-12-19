@@ -28,7 +28,10 @@ public class Carte {
         }
     }
 
-
+    /**Vérifie si une carte est jouable par sur une autre une autre
+     * @param autreCarte la carte avec laquelle on teste si elle est jouable
+     * @return retourne vrai si la carte est jouable sur celle passée en paramètre
+     */
     public boolean estjouable(Carte autreCarte){
         boolean retour=false;
         if (autreCarte.couleur.equals(couleur)){/*voir si la carte est de la meme couleur*/

@@ -13,7 +13,7 @@ public class TestCarte {
         Carte carteTest7=new Carte(Carte.Couleur.ROUGE,8);
 
 
-
+        System.out.println("Sortie de cartes numéros/couleurs");
         System.out.println(carteTest);
         System.out.println(carteTestCouleur);
         System.out.println(carteTest1);
@@ -25,11 +25,12 @@ public class TestCarte {
         System.out.println(carteTest7);
         System.out.println();
 
-        System.out.println("test est jouable");
+        System.out.println("===Test est jouable===");
         System.out.println("Doit est false : " +carteTest.estjouable(carteTestCouleur));
         System.out.println("Doit etre true : "+carteTest3.estjouable(carteTest));
         System.out.println("Doit etre false : "+carteTest1.estjouable(carteTest6));
         System.out.println("Doit etre true : "+carteTest7.estjouable(cartetest2));
-    }
+        System.out.println();
 
+    }
 }
