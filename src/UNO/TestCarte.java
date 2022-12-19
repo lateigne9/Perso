@@ -31,4 +31,5 @@ public class TestCarte {
         System.out.println("Doit etre false : "+carteTest1.estjouable(carteTest6));
         System.out.println("Doit etre true : "+carteTest7.estjouable(cartetest2));
     }
+
 }
