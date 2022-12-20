@@ -3,8 +3,11 @@ package UNO;
 import java.util.ArrayList;
 
 public class Paquet {
-    private int nombreDeCarte=76;/*nombre de cartes avec des numéros*/
-    private int nombreDeMelange=100;
+    private final int nombreDeCarte=84;
+    /*76=nombre de cartes avec des chiffres
+    84= nombre de cartes chiffres+ plus_2
+    * 108= nombre de cartes total*/
+    private final int nombreDeMelange=100;
 
     private ArrayList<Carte> paquet=new ArrayList<>();
 
@@ -12,19 +15,28 @@ public class Paquet {
      * Constructeur d'un paquet normal
      */
     public Paquet() {
-        //TODO construction et ajout des quatres 0
+        /*construction et ajout des quatres 0*/
         for (int i = 0; i < 4; i++) {/*nombre de couleurs*/
-            paquet.add(new Carte(choixCouleur(i), 0));
+            paquet.add(new Carte(0,choixCouleur(i)));
         }
-        //TODO construction et ajout des cartes de 1 a 9
+        /*construction et ajout des cartes de 1 a 9*/
         for (int i = 0; i < 4; i++) {/*4 couleurs*/
             for (int j = 1; j <= 9; j++) {/*9 cartes*/
-                creerCarteNumeroDouble(j,i);
+                carteNumeroDouble(j,i);
             }
         }
+        /*ajout des cartes changements de sens*/
+//        carteSymboleDouble(Carte.Symbole.CHANGEMENT_DE_SENS);
+        /*ajout des cartes interdit de jouer*/
+//        carteSymboleDouble(Carte.Symbole.INTERDIT_DE_JOUER);
+        /*ajout des cartes +2*/
+        carteSymboleDouble(Carte.Symbole.PLUS_2);
+        /*ajout des cartes +4*/
+//        carteJoker(Carte.Symbole.PLUS_4);
+        /*ajout des cartes changement de couleurs*/
+//        carteJoker(Carte.Symbole.CHANGEMENT_DE_COULEUR);
         melange();
     }
-
     public ArrayList<Carte> getPaquet() {
         return paquet;
     }
@@ -33,9 +45,33 @@ public class Paquet {
         this.paquet = paquet;
     }
 
-    private void creerCarteNumeroDouble(int numero, int numeroCouleur){
+    /**Méthode qui ajoute 4 cartes joker au paquet
+     * @param symbole Symbole de la carte joker
+     */
+    private void carteJoker(Carte.Symbole symbole){
+        for (int i = 0; i < 4; i++) {
+            paquet.add(new Carte(symbole,choixCouleur(i)));
+        }
+    }
+
+    /**Méthode qui ajoute 2 cartes symboles au paquet
+     * @param symbole symbole à ajouter
+     */
+    private void carteSymboleDouble(Carte.Symbole symbole){
+        for (int i = 0; i < 4; i++) {/*4 couleurs*/
+            for (int j = 0; j < 2; j++) {
+                paquet.add(new Carte(symbole,choixCouleur(i)));
+            }
+        }
+    }
+
+    /**Méthode qui ajoute 2 cartes numérotées au paquet
+     * @param numero numéro des cartes à ajouter
+     * @param numeroCouleur numero de la couleur à ajouter qui est géré par la méthode choixCouleur
+     */
+    private void carteNumeroDouble(int numero, int numeroCouleur){
         for (int i = 0; i < 2; i++) {
-            paquet.add(new Carte(choixCouleur(numeroCouleur),numero));
+            paquet.add(new Carte(numero,choixCouleur(numeroCouleur)));
         }
     }
 
@@ -65,7 +101,7 @@ public class Paquet {
         }
     }
 
-    /**Méthode qui donne retire une carte du paquet pour la retourner
+    /**Méthode qui retourne la première carte du paquet et l'enlève du paquet
      * @return Carte donnée
      */
     public Carte donneCarte(){
