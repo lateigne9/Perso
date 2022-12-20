@@ -12,6 +12,7 @@ public class Jeu {
     private static Carte table;
 
     private final static int nombreDeCarteDistribue = 7;
+    private boolean joueurSuivantPeutJouer=true;
 
     public Jeu(int nombreDeJoueurs) {
         this.nombreDeJoueur=nombreDeJoueurs;
@@ -22,7 +23,7 @@ public class Jeu {
         //Boucle while qui cherche tant que la partie n'est pas fini, on ne s'arrete pas
         while (!fin) {
             for (Joueur joueur : joueurs) {
-                tour(joueur);
+                tour(joueur,joueurSuivantPeutJouer);
                 fin = finPartie(joueur);
                 if (fin) {
                     break;
@@ -76,7 +77,7 @@ public class Jeu {
         boolean retour = false;
         if (joueur.getMain().size() == 0) {
             retour = true;
-            System.out.println(joueur + "a gagné la partie");
+            System.out.println(joueur.getNom() + " a gagné la partie");
         }
         return retour;
     }
@@ -96,36 +97,33 @@ public class Jeu {
     /**Méthode qui simule le tour d'un joueur
      * @param joueur joueur qui joue
      */
-    private void tour(Joueur joueur) {
+    private void tour(Joueur joueur,boolean peutJouer) {
         System.out.println(descriptionTour(joueur));
-        Carte cartePosee=null;
-        if (peutJouer(joueur)){/*si le joueur peut jouer*/
-            cartePosee= joueCarte(joueur,demandeUtilisateurPLaceCarte(joueur));
-        }else {
-            pioche(joueur);
-        }
-        if (cartePosee!=null){/*verifie si une carte a été posée*/
-            //TODO remplacer les else-if par un switch
+        if (!peutJouer){/*si le joueur est interdit de jouer*/
+            System.out.println(joueur.getNom()+" ne peut pas jouer car il a reçu "+table);
+            joueurSuivantPeutJouer=true;
+        }else{
+            Carte cartePosee=null;
+            if (peutJouer(joueur)){/*si le joueur peut jouer*/
+                cartePosee= joueCarte(joueur,demandeUtilisateurPLaceCarte(joueur));
+            }else {
+                pioche(joueur);
+            }
+            if (cartePosee!=null){/*verifie si une carte a été posée*/
+                //TODO remplacer les else-if par un switch
 //            switch (cartePosee.getSymbole()){}
-            if (cartePosee.getSymbole().equals(Carte.Symbole.PLUS_4)){
-                //TODO coder ce qu'il se passe dans ce cas
+                if (cartePosee.getSymbole().equals(Carte.Symbole.PLUS_4)){
+                    plus4(joueur);
+                } else if (cartePosee.getSymbole().equals(Carte.Symbole.PLUS_2)) {
+                    plus2(joueur);
+                } else if (cartePosee.getSymbole().equals(Carte.Symbole.INTERDIT_DE_JOUER)) {
+                    joueurSuivantPeutJouer=false;
+                } else if (cartePosee.getSymbole().equals(Carte.Symbole.CHANGEMENT_DE_SENS)) {
+                    //TODO coder ce qu'il se passe dans ce cas
 
-            } else if (cartePosee.getSymbole().equals(Carte.Symbole.PLUS_2)) {
-                //TODO coder ce qu'il se passe dans ce cas
-                plus2(joueurSuivant(joueur));
-
-            } else if (cartePosee.getSymbole().equals(Carte.Symbole.INTERDIT_DE_JOUER)) {
-                //TODO coder ce qu'il se passe dans ce cas
-
-            } else if (cartePosee.getSymbole().equals(Carte.Symbole.CHANGEMENT_DE_SENS)) {
-                //TODO coder ce qu'il se passe dans ce cas
-
-            } else if (cartePosee.getSymbole().equals(Carte.Symbole.CHANGEMENT_DE_COULEUR)) {
-                //TODO coder ce qu'il se passe dans ce cas
-
-            } else if (cartePosee.getSymbole().equals(Carte.Symbole.SANS_SYMBOLE)) {/*si c'est une carte chiffre*/
-                //TODO coder ce qu'il se passe dans ce cas
-
+                } else if (cartePosee.getSymbole().equals(Carte.Symbole.CHANGEMENT_DE_COULEUR)) {
+                    table.setCouleur(choixCouleur(joueur));
+                }
             }
         }
     }
@@ -137,7 +135,7 @@ public class Jeu {
     private String descriptionTour(Joueur joueur){
         return "\nSur la table il y a \n"+
                 table+
-                "\nAu tour de "+joueur.getNom().toUpperCase()+" de jouer avec la main: "+joueur.getMain()+'\n';
+                "\nAu tour de "+joueur.getNom()+" de jouer avec la main: "+joueur.getMain()+'\n';
     }
 
     /**
@@ -163,7 +161,7 @@ public class Jeu {
         do {
             System.out.print("Position de la carte à jouer : ");
             placeCarteMain=input.nextInt();
-            if (placeCarteMain>joueur.getMain().size()){
+            if (placeCarteMain>joueur.getMain().size()-1){
                 placeCarteMain=0;
             }
         }while (!joueur.getMain().get(placeCarteMain).estjouable(table));
@@ -179,31 +177,32 @@ public class Jeu {
         System.out.println(joueur.getNom()+" a pioché "+joueur.getMain().get(dernierecarte));
     }
 
-    /**Méthode qui donne 2 cartes de la pioche au joueur
-     * @param joueur joueur qui subit le +2
+    /**Méthode qui donne 2 cartes de la pioche au joueur suivant
+     * @param joueur joueur qui met le +2
      */
     private void plus2(Joueur joueur){
-        //TODO changer la methode
         Carte[] deuxCarte=new Carte[2];
-        for (int i = 0; i < deuxCarte.length; i++) {
-            deuxCarte[i]=paquet.donneCarte();
-            joueur.getMain().add(deuxCarte[i]);
-        }
-        System.out.println(joueur.getNom().toUpperCase()+" a reçu un +2\nIl reçoit : "+ Arrays.toString(deuxCarte));
-        //TODO le joueur suivant doit se recevoir un faux interdit de jouer pour passer son tour
+        jokerDonneCarte(joueurSuivant(joueur), deuxCarte);
+    }
+
+    /**Méthode qui donne 4 cartes de la pioche au joueur suivant et met à jour la couleur de la
+     * carte +4 pour que la carte suivante soit de la couleur demandée
+     * @param joueur joueur qui met le +4
+     */
+    private void plus4(Joueur joueur){
+        Carte[] listeCarte= new Carte[4];
+        jokerDonneCarte(joueurSuivant(joueur), listeCarte);
+        table.setCouleur(choixCouleur(joueur));
 
     }
 
-    /**Méthode qui donne 4 cartes de la pioche au joueur
-     * @param joueur joueur qui subit le +4
-     */
-    private Carte.Couleur plus4(Joueur joueur){
-        //TODO changer la methode
-        Carte[] listeCarte= new Carte[4];
-        for (int i = 0; i < 4; i++) {
-
+    private void jokerDonneCarte(Joueur joueur, Carte[] listeCarte) {
+        for (int i = 0; i < listeCarte.length; i++) {
+            listeCarte[i]=paquet.donneCarte();
+            joueur.getMain().add(listeCarte[i]);
         }
-        return null;
+        System.out.println('\n'+joueur.getNom()+" a reçu une attaque\nIl reçoit : "+ Arrays.toString(listeCarte));
+        joueurSuivantPeutJouer=false;
     }
 
     /**Méthode qui vérifie si un joueur peut jouer sur la carte de la table
@@ -241,8 +240,35 @@ public class Jeu {
         return suivant;
     }
 
+    private Carte.Couleur choixCouleur(Joueur joueur){
+        Carte.Couleur couleurchoisie= Carte.Couleur.NOIR;
+        Scanner input=new Scanner(System.in);
+        int chiffreDonne;
+        do {
+            System.out.println(joueur.getNom()+ ", quelle couleur veux tu ?\n1 = Rouge\n2 = Bleu\n3 = Vert\n4 = Jaune");
+            chiffreDonne= input.nextInt();
+        }while (!verifieChiffreCouleur(chiffreDonne));
+        return switch (chiffreDonne){
+          case 1-> Carte.Couleur.ROUGE;
+          case 2-> Carte.Couleur.BLEU;
+          case 3-> Carte.Couleur.VERT;
+          case 4-> Carte.Couleur.JAUNE;
+          default -> Carte.Couleur.NOIR;
+        };
+    }
+    private boolean verifieChiffreCouleur(int chiffre){
+        return switch (chiffre) {
+            case 1, 2, 3, 4 -> true;
+            default -> false;
+        };
+    }
+
     @Override
     public String toString() {
         return "\nSur la table il y a \n" + table + "\nles paquets des joueurs sont " + joueurs;
+    }
+
+    public static void main(String[] args) {
+        new Jeu(2);
     }
 }

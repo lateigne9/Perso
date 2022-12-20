@@ -7,7 +7,7 @@ public class Joueur {
     private ArrayList<Carte> main=new ArrayList<>();
 
     public Joueur(String nom) {
-        this.nom = nom;
+        this.nom = nom.toUpperCase();
     }
 
     public String getNom() {

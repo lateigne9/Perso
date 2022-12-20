@@ -3,9 +3,9 @@ package UNO;
 import java.util.ArrayList;
 
 public class Paquet {
-    private final int nombreDeCarte=84;
+    private final int nombreDeCarte=108;
     /*76=nombre de cartes avec des chiffres
-    84= nombre de cartes chiffres+ plus_2
+    +8 = cartes joker de couleurs
     * 108= nombre de cartes total*/
     private final int nombreDeMelange=100;
 
@@ -26,15 +26,15 @@ public class Paquet {
             }
         }
         /*ajout des cartes changements de sens*/
-//        carteSymboleDouble(Carte.Symbole.CHANGEMENT_DE_SENS);
+        carteSymboleDouble(Carte.Symbole.CHANGEMENT_DE_SENS);
         /*ajout des cartes interdit de jouer*/
-//        carteSymboleDouble(Carte.Symbole.INTERDIT_DE_JOUER);
+        carteSymboleDouble(Carte.Symbole.INTERDIT_DE_JOUER);
         /*ajout des cartes +2*/
         carteSymboleDouble(Carte.Symbole.PLUS_2);
         /*ajout des cartes +4*/
-//        carteJoker(Carte.Symbole.PLUS_4);
+        carteJoker(Carte.Symbole.PLUS_4);
         /*ajout des cartes changement de couleurs*/
-//        carteJoker(Carte.Symbole.CHANGEMENT_DE_COULEUR);
+        carteJoker(Carte.Symbole.CHANGEMENT_DE_COULEUR);
         melange();
     }
     public ArrayList<Carte> getPaquet() {
