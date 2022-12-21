@@ -1,9 +1,11 @@
 package UNO;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
+/**
+ * @author La_teigne
+ * 20/12/2022
+ */
 public class Jeu {
     private int nombreDeJoueur;
     private ArrayList<Joueur> joueurs = new ArrayList<>();
@@ -12,7 +14,7 @@ public class Jeu {
     private static Carte table;
 
     private final static int nombreDeCarteDistribue = 7;
-    private boolean joueurSuivantPeutJouer=true;
+    private boolean joueurSuivantPeutJouer=true,changerSens=false;
 
     public Jeu(int nombreDeJoueurs) {
         this.nombreDeJoueur=nombreDeJoueurs;
@@ -25,6 +27,10 @@ public class Jeu {
             for (Joueur joueur : joueurs) {
                 tour(joueur,joueurSuivantPeutJouer);
                 fin = finPartie(joueur);
+                if (changerSens){/*si le sens est changé, on remet le sens normal mais on a deja reorganiser la liste de joueurs*/
+                    changerSens=false;
+                    break;
+                }
                 if (fin) {
                     break;
                 }
@@ -120,7 +126,7 @@ public class Jeu {
                     joueurSuivantPeutJouer=false;
                 } else if (cartePosee.getSymbole().equals(Carte.Symbole.CHANGEMENT_DE_SENS)) {
                     //TODO coder ce qu'il se passe dans ce cas
-
+                    changeSens(joueur);
                 } else if (cartePosee.getSymbole().equals(Carte.Symbole.CHANGEMENT_DE_COULEUR)) {
                     table.setCouleur(choixCouleur(joueur));
                 }
@@ -161,11 +167,11 @@ public class Jeu {
         do {
             System.out.print("Position de la carte à jouer : ");
             placeCarteMain=input.nextInt();
-            if (placeCarteMain>joueur.getMain().size()-1){
+            if (placeCarteMain-1>joueur.getMain().size()){
                 placeCarteMain=0;
             }
-        }while (!joueur.getMain().get(placeCarteMain).estjouable(table));
-        return placeCarteMain;
+        }while (!joueur.getMain().get(placeCarteMain-1).estjouable(table));
+        return placeCarteMain-1;
     }
 
     /**Methode qui fait piocher le joueur
@@ -241,7 +247,6 @@ public class Jeu {
     }
 
     private Carte.Couleur choixCouleur(Joueur joueur){
-        Carte.Couleur couleurchoisie= Carte.Couleur.NOIR;
         Scanner input=new Scanner(System.in);
         int chiffreDonne;
         do {
@@ -262,6 +267,30 @@ public class Jeu {
             default -> false;
         };
     }
+    /**Méthode qui change l'ordre des joueurs pour simuler le fait que l'on change de sens
+     * @param joueur joueur qui joue la carte de changement de sens
+     */
+    private void changeSens(Joueur joueur){
+        changerSens=true;
+        int placeJoueur=0;
+        ArrayList<Joueur> copie=new ArrayList<>();
+        //TODO faire en sorte que le premier joueur dans la nouvelle liste soit le joueur qui a joué avant ...
+        for (int i = 0; i < nombreDeJoueur; i++) {
+            if (joueurs.get(i).equals(joueur)){
+                placeJoueur=i;
+                break;
+            }
+        }
+        for (int i = placeJoueur; i <nombreDeJoueur ; i++) {
+            copie.add(joueurs.get(i));
+        }
+        for (int i = 0; i < placeJoueur; i++) {
+            copie.add(joueurs.get(i));
+        }
+        /*il faut maintenant retourner les valeurs du tableau copie*/
+        Collections.reverse(copie);
+        joueurs=copie;
+    }
 
     @Override
     public String toString() {
@@ -269,6 +298,6 @@ public class Jeu {
     }
 
     public static void main(String[] args) {
-        new Jeu(2);
+        new Jeu(4);
     }
 }

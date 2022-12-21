@@ -1,5 +1,8 @@
 package UNO;
-
+/**
+ * @author La_teigne
+ * 18/12/2022
+ */
 public class Carte {
     enum Couleur {
         ROUGE,BLEU,VERT,JAUNE, NOIR

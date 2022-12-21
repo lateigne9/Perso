@@ -1,5 +1,8 @@
 package UNO;
-
+/**
+ * @author La_teigne
+ * 18/12/2022
+ */
 public class TestPaquet {
     public static void main(String[] args) {
         Paquet paquetTest=new Paquet();

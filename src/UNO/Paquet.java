@@ -1,7 +1,10 @@
 package UNO;
 
 import java.util.ArrayList;
-
+/**
+ * @author La_teigne
+ * 18/12/2022
+ */
 public class Paquet {
     private final int nombreDeCarte=108;
     /*76=nombre de cartes avec des chiffres

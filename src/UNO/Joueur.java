@@ -2,6 +2,10 @@ package UNO;
 
 import java.util.ArrayList;
 
+/**
+ * @author La_teigne
+ * 18/12/2022
+ */
 public class Joueur {
     private String nom="INCONNU";
     private ArrayList<Carte> main=new ArrayList<>();

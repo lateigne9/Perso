@@ -2,7 +2,10 @@ package UNO;
 
 
 import java.util.ArrayList;
-
+/**
+ * @author la_teigne
+ * 18/12/2022
+ * */
 public class TestJoueur {
     public static void main(String[] args) {
         Paquet paquet1=new Paquet();
