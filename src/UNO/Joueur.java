@@ -2,12 +2,16 @@ package UNO;
 
 import java.util.ArrayList;
 
+/**
+ * @author La_teigne
+ * 18/12/2022
+ */
 public class Joueur {
     private String nom="INCONNU";
     private ArrayList<Carte> main=new ArrayList<>();
 
     public Joueur(String nom) {
-        this.nom = nom;
+        this.nom = nom.toUpperCase();
     }
 
     public String getNom() {
