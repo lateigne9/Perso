@@ -104,31 +104,32 @@ public class Jeu {
      * @param joueur joueur qui joue
      */
     private void tour(Joueur joueur,boolean peutJouer) {
-        System.out.println(descriptionTour(joueur));
         if (!peutJouer){/*si le joueur est interdit de jouer*/
             System.out.println(joueur.getNom()+" ne peut pas jouer car il a reçu "+table);
             joueurSuivantPeutJouer=true;
         }else{
             Carte cartePosee=null;
             if (peutJouer(joueur)){/*si le joueur peut jouer*/
+                System.out.println(descriptionTour(joueur));
                 cartePosee= joueCarte(joueur,demandeUtilisateurPLaceCarte(joueur));
             }else {
                 pioche(joueur);
             }
             if (cartePosee!=null){/*verifie si une carte a été posée*/
                 //TODO remplacer les else-if par un switch
-//            switch (cartePosee.getSymbole()){}
-                if (cartePosee.getSymbole().equals(Carte.Symbole.PLUS_4)){
-                    plus4(joueur);
-                } else if (cartePosee.getSymbole().equals(Carte.Symbole.PLUS_2)) {
-                    plus2(joueur);
-                } else if (cartePosee.getSymbole().equals(Carte.Symbole.INTERDIT_DE_JOUER)) {
-                    joueurSuivantPeutJouer=false;
-                } else if (cartePosee.getSymbole().equals(Carte.Symbole.CHANGEMENT_DE_SENS)) {
-                    //TODO coder ce qu'il se passe dans ce cas
-                    changeSens(joueur);
-                } else if (cartePosee.getSymbole().equals(Carte.Symbole.CHANGEMENT_DE_COULEUR)) {
-                    table.setCouleur(choixCouleur(joueur));
+                switch (cartePosee.getSymbole()){
+                    case PLUS_4:plus4(joueur);
+                    break;
+                    case PLUS_2:plus2(joueur);
+                    break;
+                    case INTERDIT_DE_JOUER:joueurSuivantPeutJouer=false;
+                    break;
+                    case CHANGEMENT_DE_SENS:changeSens(joueur);
+                    break;
+                    case CHANGEMENT_DE_COULEUR:table.setCouleur(choixCouleur(joueur));
+                    break;
+                    default:
+                        break;
                 }
             }
         }
@@ -141,7 +142,7 @@ public class Jeu {
     private String descriptionTour(Joueur joueur){
         return "\nSur la table il y a \n"+
                 table+
-                "\nAu tour de "+joueur.getNom()+" de jouer avec la main: "+joueur.getMain()+'\n';
+                "\n\nAu tour de "+joueur.getNom()+" de jouer avec la main: "+joueur.getMain();
     }
 
     /**
@@ -152,7 +153,7 @@ public class Jeu {
      */
     private Carte joueCarte(Joueur joueur, int placeCarte) {
         table = joueur.getMain().get(placeCarte);
-        System.out.println(joueur.getNom() + " a joué " + table);
+        System.out.println('\n'+joueur.getNom() + " a joué " + table);
         joueur.getMain().remove(placeCarte);
         return table;
     }
@@ -167,8 +168,8 @@ public class Jeu {
         do {
             System.out.print("Position de la carte à jouer : ");
             placeCarteMain=input.nextInt();
-            if (placeCarteMain-1>joueur.getMain().size()){
-                placeCarteMain=0;
+            if (placeCarteMain-1>=joueur.getMain().size()||placeCarteMain<=0){
+                placeCarteMain=1;
             }
         }while (!joueur.getMain().get(placeCarteMain-1).estjouable(table));
         return placeCarteMain-1;
@@ -178,6 +179,7 @@ public class Jeu {
      * @param joueur joueur qui pioche
      */
     private void pioche(Joueur joueur) {
+        verifiePioche(1);
         joueur.getMain().add(paquet.donneCarte());
         int dernierecarte=joueur.getMain().size()-1;
         System.out.println(joueur.getNom()+" a pioché "+joueur.getMain().get(dernierecarte));
@@ -203,6 +205,7 @@ public class Jeu {
     }
 
     private void jokerDonneCarte(Joueur joueur, Carte[] listeCarte) {
+        verifiePioche(listeCarte.length);
         for (int i = 0; i < listeCarte.length; i++) {
             listeCarte[i]=paquet.donneCarte();
             joueur.getMain().add(listeCarte[i]);
@@ -261,6 +264,11 @@ public class Jeu {
           default -> Carte.Couleur.NOIR;
         };
     }
+
+    /**Méthode qui vérifie si le chiffre rentré est bon ou pas
+     * @param chiffre chiffre testé
+     * @return vrai si le chiffre correspond à une couleur
+     */
     private boolean verifieChiffreCouleur(int chiffre){
         return switch (chiffre) {
             case 1, 2, 3, 4 -> true;
@@ -274,7 +282,6 @@ public class Jeu {
         changerSens=true;
         int placeJoueur=0;
         ArrayList<Joueur> copie=new ArrayList<>();
-        //TODO faire en sorte que le premier joueur dans la nouvelle liste soit le joueur qui a joué avant ...
         for (int i = 0; i < nombreDeJoueur; i++) {
             if (joueurs.get(i).equals(joueur)){
                 placeJoueur=i;
@@ -287,9 +294,17 @@ public class Jeu {
         for (int i = 0; i < placeJoueur; i++) {
             copie.add(joueurs.get(i));
         }
-        /*il faut maintenant retourner les valeurs du tableau copie*/
         Collections.reverse(copie);
         joueurs=copie;
+    }
+
+    /**Méthode qui vérifie s'il y a assez de carte dans la pioche pour pouvoir piocher dedans si ce n'est pas le cas, la pioche se régénère
+     * @param nombreDeCarte nombre de cartes qu'il faudra donner
+     */
+    private void verifiePioche(int nombreDeCarte){
+        if (nombreDeCarte>paquet.getPaquet().size()){
+            paquet=new Paquet();
+        }
     }
 
     @Override
@@ -298,6 +313,6 @@ public class Jeu {
     }
 
     public static void main(String[] args) {
-        new Jeu(4);
+        new Jeu(2);
     }
 }
