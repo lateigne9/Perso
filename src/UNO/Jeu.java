@@ -313,6 +313,10 @@ public class Jeu {
     }
 
     public static void main(String[] args) {
-        new Jeu(2);
+        Scanner input=new Scanner(System.in);
+        int nombreDeJoueur;
+        System.out.print("Saisir le nombre de joueurs: ");
+        nombreDeJoueur=input.nextInt();
+        new Jeu(nombreDeJoueur);
     }
 }
